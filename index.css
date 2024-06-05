@@ -61,6 +61,13 @@
   }
 }
 
+/* hide logo on small screen sizes */
+@media(max-width: 852px) {
+  .logo {
+    display: none;
+  }
+}
+
 .last-updated-container {
   display: flex;
   flex-direction: row;
@@ -68,7 +75,7 @@
   align-items: center;
 }
 /* hide last updated container when width is too small */
-@media(max-width: 852px) {
+@media(max-width: 540px) {
   .last-updated-container {
     display: none;
   }
