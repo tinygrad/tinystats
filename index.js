@@ -242,11 +242,8 @@ function main() {
 
             const commitElem = $line.querySelector(".hoverline-commit");
             const commit =
-              runCommitMap[point.getAttribute("ct:value").split(",")[0]].slice(
-                0,
-                7,
-              );
-            commitElem.textContent = commit;
+              runCommitMap[point.getAttribute("ct:value").split(",")[0]];
+            commitElem.textContent = commit.slice(0, 7);
             commitElem.href =
               `https://github.com/tinygrad/tinygrad/commit/${commit}`;
 
