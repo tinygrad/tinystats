@@ -5,7 +5,8 @@ function main() {
   if (last_n_slider.value == 0) {
     last_n.textContent = "All";
   } else {
-    last_n.textContent = Number(last_n_slider.value) + Number(last_n_slider.step);
+    last_n.textContent = Number(last_n_slider.value) +
+      Number(last_n_slider.step);
   }
 
   // connect to websocket
@@ -79,7 +80,7 @@ function main() {
       charts[`${data.filename}-${data.system}`].update({
         series: data.benchmarks,
       }, {
-        showPoint: (data.benchmarks[0].length <= 100) ? true : false,
+        showPoint: (data.benchmarks[0].length <= 300) ? true : false,
         showLine: true,
         showArea: true,
         lineSmooth: false,
@@ -89,6 +90,9 @@ function main() {
           high: highest_x,
           low: lowest_x,
         },
+        plugins: [
+          Chartist.plugins.hoverline(),
+        ],
       });
     } else if ("commit" in data) {
       const lastUpdated = document.querySelector("#last-updated");
@@ -115,6 +119,12 @@ function main() {
         if (!entry.target.hasAttribute("data-charted")) {
           charts[`${filename}-${system}`] = new Chartist.Line(
             `#chart-${filename.replace(/\.[^/.]+$/, "")}-${system}`,
+            [],
+            {
+              plugins: [
+                Chartist.plugins.hoverline(),
+              ],
+            },
           );
 
           let last_n_v = Number(last_n_slider.value) +
@@ -148,3 +158,117 @@ function main() {
 }
 
 main();
+
+// libs
+
+(function (window, document, Chartist) {
+  "use strict";
+
+  Chartist.plugins = Chartist.plugins || {};
+  Chartist.plugins.hoverline = function () {
+    return function hoverline(chart) {
+      const $chart = chart.container;
+      let $lineIsShown = false;
+
+      let $line = $chart.querySelector(".chartist-hoverline");
+      if (!$line) {
+        $line = document.createElement("div");
+        $line.className = "chartist-hoverline";
+        $chart.appendChild($line);
+      }
+
+      hide($line);
+
+      function on(event, selector, callback) {
+        $chart.addEventListener(event, function (e) {
+          if (!selector || hasClass(e.target, selector)) {
+            callback(e);
+          }
+        });
+      }
+
+      on("mouseover", "ct-chart-line", function () {
+        show($line);
+      });
+
+      on("mouseout", "ct-chart-line", function () {
+        hide($line);
+      });
+
+      on("mousemove", null, function (event) {
+        if ($lineIsShown) {
+          // locate the closest point on the x-axis
+          const eventX = event.layerX || event.offsetX;
+          let target, points;
+          if (chart instanceof Chartist.Line) {
+            target = event.target;
+            if (target.classList.contains("ct-point")) {
+              points = [target];
+            } else {
+              points = target.parentNode.querySelectorAll(".ct-point");
+            }
+          }
+          let closest;
+          if (points.length > 0) {
+            closest = Array.from(points).reduce((prev, curr) => {
+              if (!prev) return curr;
+              const prevDelta = Math.abs(prev.x1.baseVal.value - eventX);
+              const currDelta = Math.abs(curr.x1.baseVal.value - eventX);
+              return prevDelta < currDelta ? prev : curr;
+            });
+          }
+
+          setPosition(event, closest);
+        }
+      });
+
+      function setPosition(event, point) {
+        const width = $line.offsetWidth;
+        const offsetX = -width / 2;
+
+        const offsetBox = $chart.getBoundingClientRect();
+        const allOffsetLeft = -offsetBox.left - window.pageXOffset + offsetX;
+
+        if (point) {
+          const anchorLeft = point.x2.baseVal.value + offsetBox.left + window.pageXOffset;
+          $line.style.left = anchorLeft + allOffsetLeft + "px";
+        } else {
+          $line.style.left = event.pageX + allOffsetLeft + "px";
+        }
+      }
+
+      /**
+       * Shows the line element, if not shown
+       * @param element
+       */
+      function show(element) {
+        $lineIsShown = true;
+        if (!hasClass(element, "hoverline-show")) {
+          element.className = element.className + " hoverline-show";
+        }
+      }
+
+      /**
+       * Hides the line element
+       * @param element
+       */
+      function hide(element) {
+        $lineIsShown = false;
+        const regex = new RegExp("hoverline-show" + "\\s*", "gi");
+        element.className = element.className.replace(regex, "").trim();
+      }
+    };
+  };
+
+  /**
+   * Returns whether a element has a css class called className
+   * @param element
+   * @param className
+   * @return {boolean}
+   */
+  function hasClass(element, className) {
+    return (" " + element.getAttribute("class") + " ").indexOf(
+      " " + className + " ",
+    ) > -1;
+  }
+})(window, document, Chartist);

@@ -161,6 +161,20 @@
   fill: var(--silver-color);
 }
 
+/* chartist hoverline */
+.chartist-hoverline {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  width: 2px;
+  background-color: var(--accent-color);
+  opacity: 0;
+  pointer-events: none;
+}
+.hoverline-show {
+  opacity: 1;
+}
+
 /* fonts */
 .megrim-regular {
   font-family: "Megrim", system-ui;
