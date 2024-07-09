@@ -174,28 +174,22 @@ main();
       if (!$line) {
         $line = document.createElement("div");
         $line.className = "chartist-hoverline";
+        const $box = document.querySelector(".hoverline-box");
+        $line.appendChild($box.cloneNode(true));
         $chart.appendChild($line);
       }
 
       hide($line);
 
-      function on(event, selector, callback) {
-        $chart.addEventListener(event, function (e) {
-          if (!selector || hasClass(e.target, selector)) {
-            callback(e);
-          }
-        });
-      }
-
-      on("mouseover", "ct-chart-line", function () {
+      $chart.addEventListener("mouseover", function () {
         show($line);
       });
 
-      on("mouseout", "ct-chart-line", function () {
+      $chart.addEventListener("mouseout", function () {
         hide($line);
       });
 
-      on("mousemove", null, function (event) {
+      $chart.addEventListener("mousemove", function (event) {
         if ($lineIsShown) {
           // locate the closest point on the x-axis
           const eventX = event.layerX || event.offsetX;
@@ -232,8 +226,10 @@ main();
         if (point) {
           const anchorLeft = point.x2.baseVal.value + offsetBox.left + window.pageXOffset;
           $line.style.left = anchorLeft + allOffsetLeft + "px";
+          $line.querySelector(".hoverline-run").textContent = point.getAttribute("ct:value").split(",")[0];
         } else {
           $line.style.left = event.pageX + allOffsetLeft + "px";
+          $line.querySelector(".hoverline-run").textContent = "";
         }
       }
 
