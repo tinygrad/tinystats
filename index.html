@@ -8,6 +8,9 @@
   <meta name="description" content="tinygrad performance tracking">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
+  <!-- alpinejs -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
   <!-- chartist -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.js"
     integrity="sha512-9rxMbTkN9JcgG5euudGbdIbhFZ7KGyAuVomdQDI9qXfPply9BJh0iqA7E/moLCatH2JD4xBGHwV6ezBkCpnjRQ=="
@@ -45,95 +48,38 @@
         </div>
       </div>
     </div>
-    <div class="centered stat-outer-container">
+    <div class="centered stat-outer-container" x-data="
+      {
+        benchmarks: {
+          'llama_unjitted.txt': { name: 'Llama 7B unjitted', system: 'amd_nvidia_mac' },
+          'llama_jitted.txt': { name: 'Llama 7B jitted', system: 'amd_nvidia_mac' },
+          'llama_beam.txt': { name: 'Llama 7B BEAM', system: 'amd_nvidia_mac' },
+          'llama_2_70B.txt': { name: 'Llama 2 70B (tinybox red)', system: 'amd' },
+          'llama_four_gpu.txt': { name: 'Llama 7B 4 GPUs (tinybox)', system: 'amd_nvidia' },
+          'llama_six_gpu.txt': { name: 'Llama 7B 6 GPUs (tinybox)', system: 'amd_nvidia' },
+          'mixtral.txt': { name: 'Mixtral (tinybox red)', system: 'amd' },
+          'sd.txt': { name: 'Stable Diffusion', system: 'amd_nvidia_mac' },
+          'gpt2_unjitted.txt': { name: 'GPT2 unjitted', system: 'amd_nvidia_mac' },
+          'gpt2_jitted.txt': { name: 'GPT2 jitted', system: 'amd_nvidia_mac' },
+          'gpt2_half.txt': { name: 'GPT2 HALF=1', system: 'amd_nvidia_mac' },
+          'gpt2_half_beam.txt': { name: 'GPT2 HALF=1 BEAM=2', system: 'amd_nvidia_mac' },
+          'train_cifar.txt': { name: 'hlb-cifar10 (tinybox)', system: 'amd-train_nvidia-train_mac' },
+          'train_cifar_half.txt': { name: 'hlb-cifar10 HALF=1', system: 'amd-train_nvidia-train_mac' },
+          'train_cifar_bf16.txt': { name: 'hlb-cifar10 bf16 (tinybox)', system: 'amd-train_nvidia-train' },
+          'train_cifar_one_gpu.txt': { name: 'hlb-cifar10 Single GPU (tinybox)', system: 'amd-train_nvidia-train' },
+          'train_cifar_six_gpu.txt': { name: 'hlb-cifar10 Six GPUs (tinybox)', system: 'amd-train_nvidia-train' },
+          'train_resnet_one_gpu.txt': { name: 'ResNet50 Single GPU (tinybox)', system: 'amd-train_nvidia-train' },
+          'train_resnet.txt': { name: 'ResNet50 Six GPUs (tinybox)', system: 'amd-train_nvidia-train' }
+        }
+      }
+    ">
       <div class="card-container">
-        <div class="card stat-card" data-filename="llama_unjitted.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">Llama 7B unjitted</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-llama_unjitted-amd_nvidia_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="llama_jitted.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">Llama 7B jitted</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-llama_jitted-amd_nvidia_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="llama_beam.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">Llama 7B BEAM</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-llama_beam-amd_nvidia_mac"></div>
-        </div>
-
-        <div class="card stat-card" data-filename="llama_2_70B.txt" data-system="amd">
-          <h4 class="card-header">Llama 2 70B (tinybox red)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-llama_2_70B-amd"></div>
-        </div>
-        <div class="card stat-card" data-filename="llama_four_gpu.txt" data-system="amd_nvidia">
-          <h4 class="card-header">Llama 7B 4 GPUs (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-llama_four_gpu-amd_nvidia"></div>
-        </div>
-        <div class="card stat-card" data-filename="llama_six_gpu.txt" data-system="amd_nvidia">
-          <h4 class="card-header">Llama 7B 6 GPUs (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-llama_six_gpu-amd_nvidia"></div>
-        </div>
-        <div class="card stat-card" data-filename="mixtral.txt" data-system="amd">
-          <h4 class="card-header">Mixtral (tinybox red)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-mixtral-amd"></div>
-        </div>
-
-        <div class="card stat-card" data-filename="sd.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">Stable Diffusion</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-sd-amd_nvidia_mac"></div>
-        </div>
-      </div>
-
-      <div class="card-container">
-        <div class="card stat-card" data-filename="gpt2_unjitted.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">GPT2 unjitted</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-gpt2_unjitted-amd_nvidia_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="gpt2_jitted.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">GPT2 jitted</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-gpt2_jitted-amd_nvidia_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="gpt2_half.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">GPT2 HALF=1</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-gpt2_half-amd_nvidia_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="gpt2_half_beam.txt" data-system="amd_nvidia_mac">
-          <h4 class="card-header">GPT2 HALF=1 BEAM=2</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-gpt2_half_beam-amd_nvidia_mac"></div>
-        </div>
-      </div>
-
-      <div class="card-container">
-        <div class="card stat-card" data-filename="train_cifar.txt" data-system="amd-train_nvidia-train_mac">
-          <h4 class="card-header">hlb-cifar10 (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_cifar-amd-train_nvidia-train_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="train_cifar_half.txt" data-system="amd-train_nvidia-train_mac">
-          <h4 class="card-header">hlb-cifar10 HALF=1</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_cifar_half-amd-train_nvidia-train_mac"></div>
-        </div>
-        <div class="card stat-card" data-filename="train_cifar_bf16.txt" data-system="amd-train_nvidia-train">
-          <h4 class="card-header">hlb-cifar10 bf16 (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_cifar_bf16-amd-train_nvidia-train"></div>
-        </div>
-        <div class="card stat-card" data-filename="train_cifar_one_gpu.txt" data-system="amd-train_nvidia-train">
-          <h4 class="card-header">hlb-cifar10 Single GPU (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_cifar_one_gpu-amd-train_nvidia-train"></div>
-        </div>
-        <div class="card stat-card" data-filename="train_cifar_six_gpu.txt" data-system="amd-train_nvidia-train">
-          <h4 class="card-header">hlb-cifar10 Six GPUs (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_cifar_six_gpu-amd-train_nvidia-train"></div>
-        </div>
-      </div>
-
-      <div class="card-container">
-        <div class="card stat-card" data-filename="train_resnet_one_gpu.txt" data-system="amd-train_nvidia-train">
-          <h4 class="card-header">ResNet50 Single GPU (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_resnet_one_gpu-amd-train_nvidia-train"></div>
-        </div>
-        <div class="card stat-card" data-filename="train_resnet.txt" data-system="amd-train_nvidia-train">
-          <h4 class="card-header">ResNet50 Six GPUs (tinybox)</h4>
-          <div class="ct-chart ct-major-tenth" id="chart-train_resnet-amd-train_nvidia-train"></div>
-        </div>
+        <template x-for="(bdata, bfname) in benchmarks">
+          <div class="card stat-card" :data-filename="bfname" :data-system="bdata.system">
+            <h4 class="card-header" x-text="bdata.name"></h4>
+            <div class="ct-chart ct-major-tenth" :id="`chart-${bfname.replace(/\.[^/.]+$/, '')}-${bdata.system}`"></div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
