@@ -169,11 +169,14 @@
   width: 2px;
   background-color: var(--accent-color);
   opacity: 0;
-  pointer-events: none;
   z-index: 10;
+  pointer-events: none;
 }
 .hoverline-show {
   opacity: 1;
+}
+.hoverline-frozen {
+  pointer-events: all;
 }
 
 .hoverline-box {
