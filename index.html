@@ -7,6 +7,7 @@
   <title>tinygrad stats</title>
   <meta name="description" content="tinygrad performance tracking">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
   <!-- alpinejs -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -86,6 +87,12 @@
   <div class="hoverline-box">
     <h4><a class="clean-a hoverline-commit"></a></h4>
     <h4 class="hoverline-run"></h4>
+    <div class="hoverline-deltas">
+      <h6 class="hoverline-delta" id="delta-from-prev"></h6>
+    </div>
+    <div class="hoverline-deltas">
+      <h6 class="hoverline-delta" id="delta-from-first"></h6>
+    </div>
   </div>
   <script src="index.js"></script>
 </body>

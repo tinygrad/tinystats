@@ -91,9 +91,6 @@ function main() {
           high: highest_x,
           low: lowest_x,
         },
-        plugins: [
-          Chartist.plugins.hoverline(),
-        ],
       });
     } else if ("curr-commit" in data) {
       const lastUpdated = document.querySelector("#last-updated");
@@ -199,12 +196,8 @@ function main() {
             const eventX = event.layerX || event.offsetX;
             let target, points;
             if (chart instanceof Chartist.Line) {
-              target = event.target;
-              if (target.classList.contains("ct-point")) {
-                points = [target];
-              } else {
-                points = target.parentNode.querySelectorAll(".ct-point");
-              }
+              target = event.target.ownerSVGElement || event.target;
+              points = target.querySelectorAll(".ct-point");
             }
             let closest;
             if (points.length > 0) {
@@ -215,8 +208,22 @@ function main() {
                 return prevDelta < currDelta ? prev : curr;
               });
             }
+            // find all the points with the same x
+            let sameX = [];
+            if (points.length > 1) {
+              sameX = Array.from(points).filter((point) => {
+                return point.x1.baseVal.value === closest.x1.baseVal.value;
+              });
+            }
+            // locate the first points on the x-axis
+            let firstPoints = [];
+            if (points.length > 0) {
+              firstPoints = Array.from(points).filter((point) => {
+                return point.x1.baseVal.value === points[0].x1.baseVal.value;
+              });
+            }
 
-            setPosition(event, closest);
+            setPosition(event, sameX, firstPoints);
           }
         });
 
@@ -228,31 +235,63 @@ function main() {
           }
         });
 
-        function setPosition(event, point) {
+        function setPosition(event, points, firstPoints) {
           const width = $line.offsetWidth;
           const offsetX = -width / 2;
 
           const offsetBox = $chart.getBoundingClientRect();
           const allOffsetLeft = -offsetBox.left - window.pageXOffset + offsetX;
 
-          if (point) {
-            const anchorLeft = point.x2.baseVal.value + offsetBox.left +
+          if (points.length > 0) {
+            const anchorLeft = points[0].x2.baseVal.value + offsetBox.left +
               window.pageXOffset;
             $line.style.left = anchorLeft + allOffsetLeft + "px";
 
             const commitElem = $line.querySelector(".hoverline-commit");
             const commit =
-              runCommitMap[point.getAttribute("ct:value").split(",")[0]];
+              runCommitMap[points[0].getAttribute("ct:value").split(",")[0]];
             commitElem.textContent = commit.slice(0, 7);
             commitElem.href =
               `https://github.com/tinygrad/tinygrad/commit/${commit}`;
 
             $line.querySelector(".hoverline-run").textContent =
-              point.getAttribute("ct:value").split(",")[0];
+              points[0].getAttribute("ct:value").split(",")[0];
+            // get the deltas from the previous points
+            $line.querySelector("#delta-from-prev").textContent = "";
+            for (let i = 0; i < points.length; i++) {
+              const curr = points[i].getAttribute("ct:value").split(",")[1];
+              const prev = (points[i].previousElementSibling.getAttribute("ct:value") !== null) ? points[i].previousElementSibling.getAttribute("ct:value").split(",")[1] : curr;
+              const delta = curr - prev;
+              const deltaFromPrev = ((delta / prev) * 100).toFixed(2);
+              if (i === 0) {
+                $line.querySelector("#delta-from-prev").textContent += `red: ${deltaFromPrev}%\n`;
+              } else if (i === 1) {
+                $line.querySelector("#delta-from-prev").textContent += `green: ${deltaFromPrev}%\n`;
+              } else if (i === 2) {
+                $line.querySelector("#delta-from-prev").textContent += `mac: ${deltaFromPrev}%`;
+              }
+            }
+            // get the deltas from the first points
+            $line.querySelector("#delta-from-first").textContent = "";
+            for (let i = 0; i < points.length; i++) {
+              const curr = points[i].getAttribute("ct:value").split(",")[1];
+              const prev = firstPoints[i].getAttribute("ct:value").split(",")[1];
+              const delta = curr - prev;
+              const deltaFromPrev = ((delta / prev) * 100).toFixed(2);
+              if (i === 0) {
+                $line.querySelector("#delta-from-first").textContent += `red: ${deltaFromPrev}%\n`;
+              } else if (i === 1) {
+                $line.querySelector("#delta-from-first").textContent += `green: ${deltaFromPrev}%\n`;
+              } else if (i === 2) {
+                $line.querySelector("#delta-from-first").textContent += `mac: ${deltaFromPrev}%`;
+              }
+            }
           } else {
             $line.style.left = event.pageX + allOffsetLeft + "px";
             $line.querySelector(".hoverline-commit").textContent = "";
             $line.querySelector(".hoverline-run").textContent = "";
+            $line.querySelector("#delta-from-prev").textContent = "";
+            $line.querySelector("#delta-from-first").textContent = "";
           }
         }
 
