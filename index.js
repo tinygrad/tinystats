@@ -81,7 +81,7 @@ function main() {
       charts[`${data.filename}-${data.system}`].update({
         series: data.benchmarks,
       }, {
-        showPoint: (data.benchmarks[0].length <= 300) ? true : false,
+        showPoint: true,
         showLine: true,
         showArea: true,
         lineSmooth: false,
