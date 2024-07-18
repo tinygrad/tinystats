@@ -256,6 +256,18 @@ function main() {
 
             $line.querySelector(".hoverline-run").textContent =
               points[0].getAttribute("ct:value").split(",")[0];
+            // get the absolute values
+            $line.querySelector("#delta-value").textContent = "";
+            for (let i = 0; i < points.length; i++) {
+              const value = points[i].getAttribute("ct:value").split(",")[1];
+              if (i === 0) {
+                $line.querySelector("#delta-value").textContent += `red: ${value}\n`;
+              } else if (i === 1) {
+                $line.querySelector("#delta-value").textContent += `green: ${value}\n`;
+              } else if (i === 2) {
+                $line.querySelector("#delta-value").textContent += `mac: ${value}`;
+              }
+            }
             // get the deltas from the previous points
             $line.querySelector("#delta-from-prev").textContent = "";
             for (let i = 0; i < points.length; i++) {
