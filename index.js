@@ -77,6 +77,17 @@ function main() {
         x_ticks.push(i_10);
       }
 
+      // modify data if we want 1 over data
+      // only if "gpt2" or "llama" are in the filename
+      if (data.filename.includes("gpt2") || data.filename.includes("llama")) {
+        for (const benchmark of data.benchmarks) {
+          for (const point of benchmark) {
+            point.y = 1 / point.y * 1000;
+            point.y = Math.round(point.y * 100) / 100;
+          }
+        }
+      }
+
       // update chart
       charts[`${data.filename}-${data.system}`].update({
         series: data.benchmarks,
