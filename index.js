@@ -78,8 +78,7 @@ function main() {
       }
 
       // modify data if we want 1 over data
-      // only if "gpt2" or "llama" are in the filename
-      if (data.filename.includes("gpt2") || data.filename.includes("llama")) {
+      if (data.filename.includes("llama")) {
         for (const benchmark of data.benchmarks) {
           for (const point of benchmark) {
             point.y = 1 / point.y * 1000;
