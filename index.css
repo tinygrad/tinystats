@@ -6,6 +6,7 @@
   --red-color: #a52e4d;
   --green-color: #228039;
   --silver-color: #88808e;
+  --orange-color: #d8272a;
 }
 @media(prefers-color-scheme: light) {
   :root {
@@ -159,6 +160,15 @@
 }
 .ct-series-e .ct-area {
   fill: var(--silver-color);
+}
+
+/* comma */
+.ct-series-f .ct-line,
+.ct-series-f .ct-point {
+  stroke: var(--orange-color);
+}
+.ct-series-f .ct-area {
+  fill: var(--orange-color);
 }
 
 /* chartist hoverline */
