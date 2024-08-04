@@ -6,7 +6,7 @@
   --red-color: #a52e4d;
   --green-color: #228039;
   --silver-color: #88808e;
-  --orange-color: #d8272a;
+  --orange-color: #c4543d;
 }
 @media(prefers-color-scheme: light) {
   :root {
