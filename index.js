@@ -14,6 +14,14 @@ function main() {
   // const socket = new WebSocket("ws://localhost:10000");
   console.log("Connecting to websocket");
 
+  socket.onerror = (error) => {
+    console.error("WebSocket error: ", error);
+    // reload the page
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
   // state
   const charts = {};
   let currCommit = "";
