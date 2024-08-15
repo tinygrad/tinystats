@@ -14,8 +14,16 @@ function main() {
   // const socket = new WebSocket("ws://localhost:10000");
   console.log("Connecting to websocket");
 
+  // reload the page when the websocket errors or closes
   socket.onerror = (error) => {
     console.error("WebSocket error: ", error);
+    // reload the page
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+  socket.onclose = (event) => {
+    console.log("WebSocket closed: ", event);
     // reload the page
     setTimeout(() => {
       window.location.reload();
