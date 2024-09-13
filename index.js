@@ -10,8 +10,8 @@ function main() {
   }
 
   // connect to websocket
-  const socket = new WebSocket("wss://tinymod.dev:10000");
-  // const socket = new WebSocket("ws://localhost:10000");
+  // const socket = new WebSocket("wss://tinymod.dev:10000");
+  const socket = new WebSocket("ws://localhost:10000");
   console.log("Connecting to websocket");
 
   // reload the page when the websocket errors or closes
@@ -276,9 +276,21 @@ function main() {
             const commitElem = $line.querySelector(".hoverline-commit");
             const commit =
               runCommitMap[points[0].getAttribute("ct:value").split(",")[0]];
-            commitElem.textContent = commit.slice(0, 7);
-            commitElem.href =
-              `https://github.com/tinygrad/tinygrad/commit/${commit}`;
+            if (commit === undefined) {
+              commitElem.textContent = "unknown";
+            } else {
+              commitElem.textContent = commit.slice(0, 7);
+              commitElem.href =
+                `https://github.com/tinygrad/tinygrad/commit/${commit}`;
+            }
+
+            let firstName = "red";
+            const chartSystem = $chart.parentElement.getAttribute("data-system");
+            if (chartSystem == "comma") {
+              firstName = "comma";
+            } else if (chartSystem == "usage") {
+              firstName = "usage";
+            }
 
             $line.querySelector(".hoverline-run").textContent =
               points[0].getAttribute("ct:value").split(",")[0];
@@ -287,7 +299,7 @@ function main() {
             for (let i = 0; i < points.length; i++) {
               const value = points[i].getAttribute("ct:value").split(",")[1];
               if (i === 0) {
-                $line.querySelector("#delta-value").textContent += `red: ${value}\n`;
+                $line.querySelector("#delta-value").textContent += `${firstName}: ${value}\n`;
               } else if (i === 1) {
                 $line.querySelector("#delta-value").textContent += `green: ${value}\n`;
               } else if (i === 2) {
@@ -302,7 +314,7 @@ function main() {
               const delta = curr - prev;
               const deltaFromPrev = ((delta / prev) * 100).toFixed(2);
               if (i === 0) {
-                $line.querySelector("#delta-from-prev").textContent += `red: ${deltaFromPrev}%\n`;
+                $line.querySelector("#delta-from-prev").textContent += `${firstName}: ${deltaFromPrev}%\n`;
               } else if (i === 1) {
                 $line.querySelector("#delta-from-prev").textContent += `green: ${deltaFromPrev}%\n`;
               } else if (i === 2) {
@@ -317,7 +329,7 @@ function main() {
               const delta = curr - prev;
               const deltaFromPrev = ((delta / prev) * 100).toFixed(2);
               if (i === 0) {
-                $line.querySelector("#delta-from-first").textContent += `red: ${deltaFromPrev}%\n`;
+                $line.querySelector("#delta-from-first").textContent += `${firstName}: ${deltaFromPrev}%\n`;
               } else if (i === 1) {
                 $line.querySelector("#delta-from-first").textContent += `green: ${deltaFromPrev}%\n`;
               } else if (i === 2) {
