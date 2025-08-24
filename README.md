@@ -1,1 +1,1 @@
-the frontend for stats.tinygrad.org
+now at <https://stats.tinygrad.win>
